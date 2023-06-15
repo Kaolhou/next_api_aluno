@@ -2,26 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply h-screen;
+}
+.div_container {
+  @apply md:px-14 lg:px-32 sm:px-3;
+}
+h1 {
+  @apply text-3xl font-bold;
+}
+.default_input {
+  @apply bg-zinc-300 focus:bg-zinc-400 placeholder:select-none enabled:hover:bg-zinc-400 transition-colors px-3 py-1 placeholder:text-black placeholder:opacity-60 rounded disabled:text-opacity-60;
+}
+.error_input {
+  @apply ring-2 ring-red-700;
 }

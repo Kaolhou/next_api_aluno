@@ -1,39 +1,32 @@
 import { Buttons } from "@/components/Buttons";
-import { FormEvent, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/router";
-import { GetServerSideProps } from "next";
-import { isValid } from "@/middlewares/validateToken";
 
-export const getServerSideProps: GetServerSideProps = async function ({
-  req,
-  res,
-}) {
-  if (await isValid(req.cookies["auth_jwt"]!)) {
-    return {
-      props: {},
-      redirect: {
-        destination: "/alunos",
-        statusCode: 301,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
-
-export default function Home() {
+export default function Register() {
   const router = useRouter();
-  const [form, setForm] = useState<{ username: string; password: string }>({
+  const [form, setForm] = useState<{
+    username: string;
+    password: string;
+    nome: string;
+  }>({
     username: "",
     password: "",
+    nome: "",
   });
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    await axios.post("/api/login", form);
-    router.push("/alunos");
+    try {
+      e.preventDefault();
+      const data = await axios.post("/api/register", form);
+      await axios.post("/api/login", data.data);
+      router.push("/alunos");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        // eslint-disable-next-line no-console
+        console.error(error);
+      }
+    }
   }
 
   return (
@@ -43,11 +36,20 @@ export default function Home() {
         className="flex flex-col bg-zinc-200 max-w-sm m-auto px-20 rounded"
       >
         <h1 className="py-7">Login</h1>
-        <label htmlFor="user" className="mb-4 flex flex-col ">
+        <label htmlFor="nome" className="mb-4 flex flex-col ">
+          <span>Nome: </span>
+          <input
+            type="text"
+            id="nome"
+            className="default_input"
+            onChange={(e) => setForm({ ...form, nome: e.target.value })}
+          />
+        </label>
+        <label htmlFor="username" className="mb-4 flex flex-col ">
           <span>Usuário: </span>
           <input
             type="text"
-            id="user"
+            id="username"
             className="default_input"
             onChange={(e) => setForm({ ...form, username: e.target.value })}
           />
@@ -63,7 +65,7 @@ export default function Home() {
         </label>
         <span className="flex justify-center">
           <Buttons type="submit" color="default">
-            Entrar
+            Registar
           </Buttons>
         </span>
       </form>
